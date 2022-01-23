@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 1;
+      }
+      .fundo {
+        background-image: linear-gradient(45deg, rgb(114, 234, 243), crimson);
+        height: 100vh;
+        color: white;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        text-align: center;
+        padding: 25px;
+      }
+      .calculadora {
+        position: absolute;
+        background-color: rgba(161, 236, 226, 0.788);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 15px;
+        padding: 15px;
+      }
+      .botao {
+        width: 50px;
+        height: 50px;
+        font-size: 25px;
+        cursor: pointer;
+        margin: 2px;
+        background-color: rgba(255, 255, 255, 0.473);
+        border: none;
+        color: black;
+      }
+      .botao:hover {
+        background-color: white;
+      }
+      .botaoce {
+        background-color: black;
+        width: 50px;
+        height: 50px;
+        font-size: 25px;
+        cursor: pointer;
+        margin: 2px;
+        border: none;
+        color: rgb(248, 246, 246);
+      }
+      .botaoce:hover {
+        background-color: rgba(224, 85, 150, 0.527);
+      }
+      .botaoc {
+        background-color: black;
+        width: 50px;
+        height: 50px;
+        font-size: 25px;
+        cursor: pointer;
+        margin: 2px;
+        border: none;
+        color: rgb(248, 246, 246);
+      }
+      .botaoc:hover {
+        background-color: rgba(224, 85, 150, 0.527);
+      }
+      #resultado {
+        width: 207px;
+        background-color: rgba(201, 221, 233, 0.616);
+        height: 30px;
+        margin: 5px;
+        font-size: 25px;
+        color: black;
+        text-align: right;
+        padding: 5px;
+      }
+      #input-calculator-digits {
+        margin-bottom: 15px;
+        text-align: right;
+        height: 50px;
+        width: 210px;
+        font-size: x-large;
+        font-weight: lighter;
+        padding: 0px 10px;
+        border: 1px solid rgba(0 0 0 / 3%);
+        border-radius: 6px;
+        background-color: rgba(0 0 0 / 2.5%);
+        color: rgba(0, 0, 0, 0.75);
+      }
+    </style>
+  </head>
+  <body onkeyup="onChangekeyboard(event)">
+    <div class="fundo">
+      <div class="calculadora">
+        <input
+          type="text"
+          value=""
+          oninput="onChangeInputCalculator(this.value)"
+          id="input-calculator-digits"
+        />
+        <table>
+          <tr>
+            <td><button class="botaoce" onclick="clean('CE')">CE</button></td>
+            <td><button class="botaoc" onclick="back()">C</button></td>
+            <td><button class="botao" onclick="insert('%')">%</button></td>
+            <td>
+              <button class="botao" onclick="insertOperation('/')">÷</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button class="botao" onclick="insert('7')">7</button></td>
+            <td><button class="botao" onclick="insert('8')">8</button></td>
+            <td><button class="botao" onclick="insert('9')">9</button></td>
+            <td>
+              <button class="botao" onclick="insertOperation('-')">-</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button class="botao" onclick="insert('4')">4</button></td>
+            <td><button class="botao" onclick="insert('5')">5</button></td>
+            <td><button class="botao" onclick="insert('5')">6</button></td>
+            <td>
+              <button class="botao" onclick="insertOperation('+')">+</button>
+            </td>
+          </tr>
+          <tr>
+            <td><button class="botao" onclick="insert('1')">1</button></td>
+            <td><button class="botao" onclick="insert('2')">2</button></td>
+            <td><button class="botao" onclick="insert('3')">3</button></td>
+            <td>
+              <button class="botao" onclick="insertOperation('*')">x</button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <button class="botao" style="width: 106px" onclick="insert('0')">
+                0
+              </button>
+            </td>
+            <td><button class="botao" onclick="insert(',')">,</button></td>
+            <td><button class="botao" onclick="calcular()">=</button></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <script>
+      const validRegex = new RegExp(/(0|1|2|3|4|5|6|7|8|9|\,)/g);
+      function insert(num) {
+        console.log("getStrInput()", getStrInput());
+        setStrInput(`${getStrInput()}${mappingDigitsInput(num)}`);
+      }
+      function insertOperation(num) {
+        let result = getStrInput();
+        if (result.substr(result.length - 1, 1).search(validRegex) >= 0)
+          result += num;
+        setStrInput(mappingDigitsInput(result));
+      }
+      function clean() {
+        setStrInput(" ");
+      }
+      function back() {
+        var resultado = getStrInput();
+        setStrInput(resultado.substring(0, resultado.length - 1));
+      }
+      function calcular() {
+        var resultado = getStrInput();
+        if (resultado) {
+          setStrInput(
+            eval(resultado.replaceAll("x", "*").replaceAll("÷", "/").replaceAll(',', '.')).toFixed(3)
+          );
+        } else {
+          setStrInput("?");
+        }
+      }
+      function mappingDigitsInput(str) {
+        const ultDigit = str.substr(str.length - 1, 1);
+        const valid = ultDigit.search(validRegex) >= 0;
+        if (valid) return str;
+        else if (!valid) {
+          if (ultDigit === "/") return `${str.substr(0, str.length - 1)}÷`;
+          else if (ultDigit === "*") return `${str.substr(0, str.length - 1)}x`;
+          else if (ultDigit === "+" || ultDigit === "-") return str;
+        }
+        return getStrInput();
+      }
+      function onChangekeyboard(ev) {
+        if (ev.keyCode === 13 || ev.which === 13) calcular();
+      }
+      const setStrInput = (_str) =>
+        (document.getElementById("input-calculator-digits").value = _str);
+      function getStrInput() {
+        return document.getElementById("input-calculator-digits").value;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt" class="" lazy-loaded="true">
+  <head>
+    <meta charset="utf-8" />
+    <title>Calculadora</title>
+    <style type="text/css">
+      /* .button-action-calculator {
+      } */
+    </style>
+  </head>
+  <body>
+    <div>
+      <input
+        type="text"
+        value=""
+        oninput="onChangeInputCalculator(this.value)"
+        id="input-calculator-digits"
+      />
+      <span>
+        <div>
+          <button value="1" class="button-action-calculator">1</button>
+          <button value="2" class="button-action-calculator">2</button>
+          <button value="3" class="button-action-calculator">3</button>
+          <button
+            value="-"
+            class="button-operator-calculation"
+            onclick="calculationCalculator(this)"
+          >
+            -
+          </button>
+        </div>
+        <div>
+          <button value="4" class="button-action-calculator">4</button>
+          <button value="5" class="button-action-calculator">5</button>
+          <button value="6" class="button-action-calculator">6</button>
+          <button
+            value="+"
+            class="button-operator-calculation"
+            onclick="calculationCalculator(this)"
+          >
+            +
+          </button>
+        </div>
+        <div>
+          <button value="7" class="button-action-calculator">7</button>
+          <button value="8" class="button-action-calculator">8</button>
+          <button value="9" class="button-action-calculator">9</button>
+          <button
+            value="÷"
+            class="button-operator-calculation"
+            onclick="calculationCalculator(this)"
+          >
+            ÷
+          </button>
+        </div>
+        <div>
+          <button
+            value="clear"
+            class="button-operator-calculation"
+            onclick="clearCalculator()"
+          >
+            L
+          </button>
+          <button value="0" class="button-action-calculator">0</button>
+          <button
+            value="result"
+            class="button-operator-calculation"
+            onclick="resultCalculator()"
+          >
+            R
+          </button>
+          <button
+            value="x"
+            class="button-operator-calculation"
+            onclick="calculationCalculator(this)"
+          >
+            ×
+          </button>
+        </div>
+      </span>
+    </div>
+    <script>
+      var strInput = "";
+      const validRegex = new RegExp(/(0|1|2|3|4|5|6|7|8|9)/g);
+
+      document
+        .querySelectorAll(".button-action-calculator")
+        .forEach((elem) =>
+          elem.addEventListener("click", buttonValueCalculator)
+        );
+
+      function calculationCalculator(elem) {
+        if (strInput.substr(strInput.length - 1, 1).search(validRegex) >= 0)
+          strInput += `${elem.value}`;
+        setStrInput(strInput);
+      }
+
+      function resultCalculator() {
+        const arrNumbers = strInput
+          .split(/(\+|\-|\x|\÷)/g)
+          .filter((c) => c.search(/(\+|\-|\x|\÷)/g) === -1)
+          .map((vl) => parseInt(vl));
+        const arrOperators = strInput.match(/(\+|\-|\x|\÷)/g);
+        const _result = arrNumbers.reduce(
+          (acm, vl, index) =>
+            index === 0
+              ? acm + vl
+              : mappingCalculation(acm, vl, arrOperators[index - 1]),
+          0
+        );
+        setStrInput(_result);
+        strInput = '';
+      }
+      
+      function mappingCalculation(acm, value, operator) {
+        let nValue;
+        switch (operator) {
+          case "+": {
+            nValue = acm + value;
+            break;
+          }
+          case "-": {
+            nValue = acm - value;
+            break;
+          }
+          case "x": {
+            nValue = acm * value;
+            break;
+          }
+          case "÷": {
+            nValue = acm / value;
+            break;
+          }
+          default:
+            break;
+        }
+        return nValue;
+      }
+
+      function clearCalculator() {
+        setStrInput("");
+        strInput = "";
+      }
+
+      function buttonValueCalculator(event) {
+        strInput += `${event.target.value}`;
+        setStrInput(strInput);
+      }
+
+      function onChangeInputCalculator(str) {
+        strInput = mappingDigitsInput(str);
+        if (strInput.substr(strInput.length - 2, 2).search(validRegex) >= 0)
+          setStrInput(strInput);
+        else setStrInput(strInput.substr(0, strInput.length - 1));
+      }
+
+      function mappingDigitsInput(str) {
+        const ultDigit = str.substr(str.length - 1, 1);
+        const valid = ultDigit.search(validRegex) >= 0;
+        if (valid) return str;
+        else if (!valid) {
+          if (ultDigit === "/") return `${str.substr(0, str.length - 1)}÷`;
+          else if (ultDigit === "*") return `${str.substr(0, str.length - 1)}x`;
+          else if (ultDigit === "+" || ultDigit === "-") return str;
+        }
+        return strInput;
+      }
+
+      const setStrInput = (_str) =>
+        (document.getElementById("input-calculator-digits").value = _str);
+    </script>
+  </body>
+</html>
